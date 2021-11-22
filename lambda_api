@@ -1,0 +1,23 @@
+import json
+from botocore.vendored import requests
+
+def lambda_handler(event, context):
+    city_input = event['currentIntent']['slots']['City']
+    params = {
+      'access_key': 'YOUR API KEY HERE FROM WEATHERSTACK ',
+      'query': city_input
+    }
+    api_result = requests.get('http://api.weatherstack.com/current', params)
+    api_response = api_result.json()
+
+    response = {
+        "dialogAction": {
+            "type": "Close",
+            "fulfillmentState": "Fulfilled",
+            "message": {
+              "contentType": "SSML",
+              "content": 'Current temperature in %s is %d℃' % (api_response['location']['name'], api_response['current']['temperature'])
+            },
+        }
+    }
+    return response
